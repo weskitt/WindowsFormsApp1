@@ -25,12 +25,31 @@ namespace WindowsFormsApp1
     class LinkProperty
     {
         char type; //链接类型，用于分词
-        int cout=0; //链接次数，用于分权
-        int fun; //链接功能，语法:Verb, Noun, Mod
+        int count; //链接次数，用于分权
+        bool[] fun; //链接功能，语法:Verb, Noun, Mod
 
         public char Type { get => type; set => type = value; }
-        public int Cout { get => cout; set => cout += value; }
-        public int Fun { get => fun; set => fun = value; }
+        public int Cout { get => count; set => count += value; }
+        public bool this[int index] { get => fun[index]; set => fun[index] = value; }
+
+        public LinkProperty()
+        {
+            type = 'O';
+            count = 0;
+            fun = new bool[] { false, false, false };
+        }
+        public LinkProperty(Char t, ref bool[] f, int c=1)
+        {
+            type = t;
+            count = c;
+
+            if (f[Pub.VERB])
+                fun[Pub.VERB] = true; //设置该连接词性属性
+            if (f[Pub.NOUN])
+                fun[Pub.NOUN] = true; //设置该连接词性属性
+            if (f[Pub.MOD])
+                fun[Pub.MOD] = true; //设置该连接词性属性
+        }
     }
     class Word //字
     {
@@ -42,11 +61,22 @@ namespace WindowsFormsApp1
             return subWords.ContainsKey(key);
         }
 
-        public void AddLink(char value, char type, int fun)
+        public void AddLink(char value, char type, bool[] fun)
         {
             if (subWords.ContainsKey(value))
             {
-                subWords[value].Cout = 1;
+                subWords[value].Cout = 1;  //存在次数+1
+                if (fun[Pub.VERB])
+                    subWords[value][Pub.VERB] = true; //设置该连接词性属性
+                if (fun[Pub.NOUN])
+                    subWords[value][Pub.NOUN] = true; //设置该连接词性属性
+                if (fun[Pub.MOD])
+                    subWords[value][Pub.MOD] = true; //设置该连接词性属性
+            }
+            else
+            {
+                LinkProperty link = new LinkProperty(type, ref fun);
+                subWords.Add(value, link);
             }
         }
     }
