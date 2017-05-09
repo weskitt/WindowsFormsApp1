@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace WindowsFormsApp1
 {
+    using WordLink = Dictionary<Char, LinkProperty>;
+
     public class Pub
     {
         public const Char L_B = 'B';
@@ -51,17 +53,15 @@ namespace WindowsFormsApp1
                 fun[Pub.MOD] = true; //设置该连接词性属性
         }
     }
-    class Word //字
+    
+    class Link //连接
     {
-        Char mWord; //主字
-        Dictionary<Char, LinkProperty> subWords; //从字,以及链接属性
-
+        Dictionary<Char, LinkProperty> subWords=new WordLink(); //从字,以及链接属性
         public Boolean IfLink(char key)
         {
             return subWords.ContainsKey(key);
         }
-
-        public void AddLink(char value, char type, bool[] fun)
+        public void AddLink(char value, char type,ref bool[] fun)
         {
             if (subWords.ContainsKey(value))
             {
@@ -78,6 +78,26 @@ namespace WindowsFormsApp1
                 LinkProperty link = new LinkProperty(type, ref fun);
                 subWords.Add(value, link);
             }
+        }
+    }
+    class Database //数据库
+    {
+        Dictionary<char, Link> wordsData; //词库
+        public Boolean Ifdata(char keyWord)
+        {
+            return wordsData.ContainsKey(keyWord);
+        }
+        public void AddWords(string words, char type, ref bool[] fun)
+        {
+            char keyWord = words[0];
+            words.Remove(0, 1);
+            if (!wordsData.ContainsKey(keyWord)) //如果词首没有有记录
+            {
+                Link tLink = new Link();
+                wordsData.Add(keyWord, tLink);
+            }
+            foreach (var item in words)
+                    wordsData[keyWord].AddLink(item, type, ref fun);
         }
     }
     class Mem //记忆单元，暂时忽略声音影像
@@ -98,7 +118,7 @@ namespace WindowsFormsApp1
     }
     class MemObject  //记忆对象，对物理对象的镜像拷贝？储存的信息被动读取
     {
-        List<Word> words;
+        List<Link> words;
         List<DepthMem> depthMem;
         List<ShortMem> shortMem;
         List<TempMem> tempMem;
