@@ -42,8 +42,8 @@ HRESULT RecordAudioStream::Record(MyAudioSink *pMySink)
 	DWORD				flags;
 
 	REFERENCE_TIME			hnsRequestedDuration = REFTIMES_PER_SEC;
-	IMMDeviceEnumerator *	pEnumerator = NULL;
-	IMMDevice *				pDevice = NULL;
+	IMMDeviceEnumerator *	pEnumerator = NULL;  //音频设备枚举器
+	IMMDevice *				pDevice = NULL;      //
 	IAudioClient *			pAudioClient = NULL;
 	IAudioCaptureClient *	pCaptureClient = NULL;
 	WAVEFORMATEX *			pwfx = NULL;
@@ -51,35 +51,38 @@ HRESULT RecordAudioStream::Record(MyAudioSink *pMySink)
 	BOOL					bDone = FALSE;
 
 	//首先枚举你的音频设备，你可以在这个时候获取到你机器上所有可用的设备
-	//并指定你需要用到的那个设置 
+	//并指定你需要用到的那个设置
+
+	//初始化音频设备枚举器 pEnumerator
 	hr = CoCreateInstance(
 		CLSID_MMDeviceEnumerator, NULL,
 		CLSCTX_ALL, IID_IMMDeviceEnumerator,
 		(void**)&pEnumerator);
 	EXIT_ON_ERROR(hr)
 
+		//音频设备枚举器获取默认音频终端设备
 		hr = pEnumerator->GetDefaultAudioEndpoint(
 			eCapture, eConsole, &pDevice);
 	EXIT_ON_ERROR(hr)
 
-		// 创建一个管理对象，通过它可以获取到你需要的一切数据  
+		// 创建一个管理对象COM，通过它可以获取到你需要的一切数据  
 		hr = pDevice->Activate(
 			IID_IAudioClient, CLSCTX_ALL,
 			NULL, (void**)&pAudioClient);
 	EXIT_ON_ERROR(hr)
 	
-		//这里面就可以获取的数据格式：频率，采集位数，声道数  
+		//这里面就可以获取，音频终端设备，的数据格式：频率，采集位数，声道数  
 		hr = pAudioClient->GetMixFormat(&pwfx);
 	EXIT_ON_ERROR(hr)
 		
 		//初始化管理对象，指定它的最大缓冲区长度，这个很重要
 		//应用程序控制数据块的大小以及延时长短都 靠这里的初始化，具体参数大家看看文档解释 
 		hr = pAudioClient->Initialize(
-			AUDCLNT_SHAREMODE_SHARED,
-			0,
-			hnsRequestedDuration,
-			0,
-			pwfx,
+			AUDCLNT_SHAREMODE_SHARED,//---SHARED其他IAudioCilent可用---EXCLUSIVE独占
+			0,						//StreamFlags 
+			hnsRequestedDuration,  //音频帧大小？
+			0,						//延迟周期，大于设备周期一定范围时，采集出来的数据就会出现丢帧的现象
+			pwfx,					//音频format
 			NULL);
 	EXIT_ON_ERROR(hr)
 

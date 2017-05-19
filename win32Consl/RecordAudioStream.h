@@ -8,6 +8,7 @@
 //-----------------------------------------------------------
 
 // REFERENCE_TIME time units per second and per millisecond
+// REFERENCE_TIME 100ns base unit
 #define REFTIMES_PER_SEC  10000000
 #define REFTIMES_PER_MILLISEC  10000
 
