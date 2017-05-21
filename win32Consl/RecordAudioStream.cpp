@@ -35,13 +35,13 @@ BOOL RecordAudioStream::AdjustFormatTo16Bits(WAVEFORMATEX * pwfx)
 HRESULT RecordAudioStream::Record(MyAudioSink *pMySink)
 {
 	HRESULT				hr;
-	REFERENCE_TIME		hnsActualDuration;
-	UINT32				bufferFrameCount;
-	UINT32				numFramesAvailable;
-	BYTE *				pData;
+	REFERENCE_TIME		hnsActualDuration; //100ns实际周期
+	UINT32				bufferFrameCount; //缓冲帧数
+	UINT32				numFramesAvailable; //可用帧数
+	BYTE *				pData; //音频数据
 	DWORD				flags;
 
-	REFERENCE_TIME			hnsRequestedDuration = REFTIMES_PER_SEC;
+	REFERENCE_TIME			hnsRequestedDuration = REFTIMES_PER_SEC; //1s缓冲请求
 	IMMDeviceEnumerator *	pEnumerator = NULL;  //音频设备枚举器
 	IMMDevice *				pDevice = NULL;      //
 	IAudioClient *			pAudioClient = NULL;
@@ -80,7 +80,7 @@ HRESULT RecordAudioStream::Record(MyAudioSink *pMySink)
 		hr = pAudioClient->Initialize(
 			AUDCLNT_SHAREMODE_SHARED,//---SHARED其他IAudioCilent可用---EXCLUSIVE独占
 			0,						//StreamFlags 
-			hnsRequestedDuration,  //音频帧大小？
+			hnsRequestedDuration,  //1s缓冲请求
 			0,						//延迟周期，大于设备周期一定范围时，采集出来的数据就会出现丢帧的现象
 			pwfx,					//音频format
 			NULL);
