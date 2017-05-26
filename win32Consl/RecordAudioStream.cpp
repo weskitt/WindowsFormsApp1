@@ -78,16 +78,25 @@ HRESULT RecordAudioStream::Record(MyAudioSink *pMySink)
 		//初始化管理对象，指定它的最大缓冲区长度，这个很重要
 		//应用程序控制数据块的大小以及延时长短都 靠这里的初始化，具体参数大家看看文档解释 
 		hr = pAudioClient->Initialize(
-			AUDCLNT_SHAREMODE_SHARED,//---SHARED其他IAudioCilent可用---EXCLUSIVE独占
+			AUDCLNT_SHAREMODE_EXCLUSIVE,//---SHARED其他IAudioCilent可用---EXCLUSIVE独占
 			0,						//StreamFlags 
-			hnsRequestedDuration,  //1s缓冲请求
-			0,						//延迟周期，大于设备周期一定范围时，采集出来的数据就会出现丢帧的现象
+			hnsRequestedDuration,  //hnsBufferDuration：1s缓冲时长请求
+			0,						//hnsPeriodicity设备周期，设置为0则使用默认
 			pwfx,					//音频format
 			NULL);
 	EXIT_ON_ERROR(hr)
+		//hnsBufferDuration，终点缓冲时长
+		//hnsPeriodicity，设备周期。仅在exclusive独占模式可设为非0，shared共享模式则一定为0。 
+		//在独占模式，该参数设定 请求设备周期来连续地读取缓冲数据，通过端点设备。
+		//如果这个请求设备周期超出设备的最小周期及系统最大周期, 那么该方法 clamps固定 这个周期到该范围,,即丢帧。
+		//如果设为0, 该方法将设备周期设为它的默认值。
+		//要获取默认的设备周期, 调用 IAudioClient::GetDevicePeriod 方法. 
+		//如果设置 AUDCLNT_STREAMFLAGS_EVENTCALLBACK 流标签，并且 AUDCLNT_SHAREMODE_EXCLUSIVE 设置为 ShareMode, 
+		//那么 hnsPeriodicity 一定是非0 并且 等于 hnsBufferDuration.
 
 		// Get the size of the allocated buffer.
 		//这个buffersize，指的是缓冲区最多可以存放多少帧的数据量 
+		//每帧大小为pwfx.nChannels*pwfx.wBitsPerSample
 		hr = pAudioClient->GetBufferSize(&bufferFrameCount);
 	EXIT_ON_ERROR(hr)
 
@@ -104,6 +113,7 @@ HRESULT RecordAudioStream::Record(MyAudioSink *pMySink)
 	EXIT_ON_ERROR(hr)
 
 		// Calculate the actual duration of the allocated buffer.
+		//填满一个指定缓冲时长所需真实时间
 		hnsActualDuration = (double)REFTIMES_PER_SEC * 
 		bufferFrameCount / pwfx->nSamplesPerSec;
 
