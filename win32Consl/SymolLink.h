@@ -6,9 +6,10 @@ class SymolLink
 {
 	map<wchar_t, SymbolLinkAttr> subWords;
 	map<wchar_t, SymbolLinkAttr>::iterator iter;
-
+	//当wchar_t=‘空’，且SymbolLinkAttr->ALONE==true时，判断为独立词
+	
+//查找link操作
 public:
-
 	bool IfLink(wchar_t key) {
 		if (subWords.find(key) == subWords.end())
 			return false; //不存在
@@ -16,6 +17,8 @@ public:
 			return true; //存在该key
 	}
 
+//添加link操作
+public:
 	void AddLink(wchar_t value, char type, const bool *fun) {
 		if (subWords.find(value) == subWords.end())
 		{
@@ -34,11 +37,11 @@ public:
 		}
 	}
 
-
+	//默认构造
 	SymolLink()
 	{
 	}
-
+	//默认析构
 	~SymolLink()
 	{
 	}

@@ -2,9 +2,10 @@
 
 class SymDataBase
 {
-	map<wchar_t, SymolLink> wordsData; //词库
+	//词库
+	map<wchar_t, SymolLink> wordsData; 
 public:
-
+	//查找字符操作
 	bool Ifdata(wchar_t key)
 	{
 		if (wordsData.find(key) == wordsData.end())
@@ -12,6 +13,9 @@ public:
 		else
 			return true;
 	}
+
+public:
+	//添加字符操作
 	void AddWords(wstring words, char type, const bool *fun)
 	{
 		wchar_t keyWord = words[0];
@@ -27,12 +31,12 @@ public:
 		}
 	}
 
+	//默认构造
 	SymDataBase()
 	{
 	}
-
+	//默认析构
 	~SymDataBase()
 	{
 	}
 };
-

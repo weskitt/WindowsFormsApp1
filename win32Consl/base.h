@@ -4,6 +4,7 @@ const wchar_t L_B = 'B';
 const wchar_t L_C = 'C';
 const wchar_t L_E = 'E';
 
-const int VERB = 0; //∂Ø¥ 
-const int NOUN = 1; //√˚¥ 
-const int MOD = 2; //–ﬁ Œ¥ 
+const int ALONE = 0;//∂¿¡¢¥ 
+const int VERB = 1; //∂Ø¥ 
+const int NOUN = 2; //√˚¥ 
+const int MOD = 3; //–ﬁ Œ¥ 
