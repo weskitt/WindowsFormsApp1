@@ -15,7 +15,7 @@ public:
 	}
 
 public:
-	//添加字符操作
+	//添加字符操作,仅供学习使用
 	void AddWords(wstring words, char type, const bool *fun)
 	{
 		wchar_t keyWord = words[0];
