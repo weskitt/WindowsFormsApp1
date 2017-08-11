@@ -19,22 +19,22 @@ public:
 
 public:
 	//添加link操作, 仅供学习使用
-	void AddLink(wchar_t value, char type, const bool *fun) {
+	void AddLink(wchar_t value, char type, const bool *flag) {
 		if (subWords.find(value) == subWords.end())
 		{
-			SymbolLinkAttr link(type, fun);
+			SymbolLinkAttr link(type, flag);
 			subWords.insert(pair<wchar_t, SymbolLinkAttr>(value, link));
 		}
 		else
 		{
 			subWords[value].count += 1;
-			if (fun[ALONE])
+			if (flag[ALONE])
 				subWords[value].flag[ALONE] = false; //设置该连接词性属性
-			if (fun[VERB])
+			if (flag[VERB])
 				subWords[value].flag[VERB] = true; //设置该连接词性属性
-			if (fun[NOUN])
+			if (flag[NOUN])
 				subWords[value].flag[NOUN] = true; //设置该连接词性属性
-			if (fun[MOD])
+			if (flag[MOD])
 				subWords[value].flag[MOD] = true; //设置该连接词性属性
 		}
 	}

@@ -1,6 +1,8 @@
 ﻿#include "stdafx.h"
 #include "RecordAudioStream.h"
 
+
+//转换格式为16bits
 BOOL RecordAudioStream::AdjustFormatTo16Bits(WAVEFORMATEX * pwfx)
 {
 	BOOL bRet(FALSE);
@@ -32,6 +34,7 @@ BOOL RecordAudioStream::AdjustFormatTo16Bits(WAVEFORMATEX * pwfx)
 	return bRet;
 }
 
+//录制音频, 可选参数录制时度，频响范围，采样率(决定波形疏密)
 HRESULT RecordAudioStream::Record(MyAudioSink *pMySink)
 {
 	HRESULT				hr;
@@ -43,11 +46,11 @@ HRESULT RecordAudioStream::Record(MyAudioSink *pMySink)
 
 	REFERENCE_TIME			hnsRequestedDuration = REFTIMES_PER_SEC; //1s缓冲请求
 	IMMDeviceEnumerator *	pEnumerator = NULL;  //音频设备枚举器
-	IMMDevice *				pDevice = NULL;      //
-	IAudioClient *			pAudioClient = NULL;
-	IAudioCaptureClient *	pCaptureClient = NULL;
-	WAVEFORMATEX *			pwfx = NULL;
-	UINT32					packetLength = 0;
+	IMMDevice *				pDevice = NULL;      //选中的音频设备
+	IAudioClient *			pAudioClient = NULL; //音频客户端
+	IAudioCaptureClient *	pCaptureClient = NULL;//音频捕获客户端
+	WAVEFORMATEX *			pwfx = NULL;          //音频格式  
+	UINT32					packetLength = 0;     //打包长度
 	BOOL					bDone = FALSE;
 
 	//首先枚举你的音频设备，你可以在这个时候获取到你机器上所有可用的设备
