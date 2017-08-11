@@ -18,7 +18,7 @@ public:
 	}
 
 public:
-	//添加link操作
+	//添加link操作, 仅供学习使用
 	void AddLink(wchar_t value, char type, const bool *fun) {
 		if (subWords.find(value) == subWords.end())
 		{
@@ -28,12 +28,14 @@ public:
 		else
 		{
 			subWords[value].count += 1;
+			if (fun[ALONE])
+				subWords[value].flag[ALONE] = false; //设置该连接词性属性
 			if (fun[VERB])
-				subWords[value].fun[VERB] = true; //设置该连接词性属性
+				subWords[value].flag[VERB] = true; //设置该连接词性属性
 			if (fun[NOUN])
-				subWords[value].fun[NOUN] = true; //设置该连接词性属性
+				subWords[value].flag[NOUN] = true; //设置该连接词性属性
 			if (fun[MOD])
-				subWords[value].fun[MOD] = true; //设置该连接词性属性
+				subWords[value].flag[MOD] = true; //设置该连接词性属性
 		}
 	}
 
