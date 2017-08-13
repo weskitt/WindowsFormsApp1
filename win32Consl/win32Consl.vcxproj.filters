@@ -36,10 +36,7 @@
     <ClInclude Include="SymDataBase.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="RecordAudioStream.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MyAudioSink.h">
+    <ClInclude Include="Hearing.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -50,10 +47,7 @@
     <ClCompile Include="win32Consl.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="RecordAudioStream.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MyAudioSink.cpp">
+    <ClCompile Include="Hearing.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

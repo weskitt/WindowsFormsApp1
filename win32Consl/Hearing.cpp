@@ -1,9 +1,9 @@
 ﻿#include "stdafx.h"
-#include "RecordAudioStream.h"
+#include "Hearing.h"
 
 
 //转换格式为16bits
-BOOL RecordAudioStream::AdjustFormatTo16Bits(WAVEFORMATEX * pwfx)
+BOOL Hearing::AdjustFormatTo16Bits(WAVEFORMATEX * pwfx)
 {
 	BOOL bRet(FALSE);
 
@@ -35,7 +35,7 @@ BOOL RecordAudioStream::AdjustFormatTo16Bits(WAVEFORMATEX * pwfx)
 }
 
 //录制音频, 可选参数录制时度，频响范围，采样率(决定波形疏密)
-HRESULT RecordAudioStream::Record(MyAudioSink *pMySink)
+HRESULT Hearing::Record()
 {
 	HRESULT				hr;
 	REFERENCE_TIME		hnsActualDuration; //100ns实际周期
@@ -44,7 +44,7 @@ HRESULT RecordAudioStream::Record(MyAudioSink *pMySink)
 	BYTE *				pData; //音频数据
 	DWORD				flags;
 
-	REFERENCE_TIME			hnsRequestedDuration = REFTIMES_PER_SEC; //1s缓冲请求
+	REFERENCE_TIME			hnsRequestedDuration = REFTIMES_PER_SEC; //定义1s缓冲填充等待时间
 	IMMDeviceEnumerator *	pEnumerator = NULL;  //音频设备枚举器
 	IMMDevice *				pDevice = NULL;      //选中的音频设备
 	IAudioClient *			pAudioClient = NULL; //音频客户端
@@ -60,34 +60,29 @@ HRESULT RecordAudioStream::Record(MyAudioSink *pMySink)
 	hr = CoCreateInstance(
 		CLSID_MMDeviceEnumerator, NULL,
 		CLSCTX_ALL, IID_IMMDeviceEnumerator,
-		(void**)&pEnumerator);
-	EXIT_ON_ERROR(hr)
+		(void**)&pEnumerator);                                EXIT_ON_ERROR(hr)
 
 		//音频设备枚举器获取默认音频终端设备
 		hr = pEnumerator->GetDefaultAudioEndpoint(
-			eCapture, eConsole, &pDevice);
-	EXIT_ON_ERROR(hr)
+			eCapture, eConsole, &pDevice);                    EXIT_ON_ERROR(hr)
 
 		// 创建一个管理对象COM，通过它可以获取到你需要的一切数据  
 		hr = pDevice->Activate(
 			IID_IAudioClient, CLSCTX_ALL,
-			NULL, (void**)&pAudioClient);
-	EXIT_ON_ERROR(hr)
+			NULL, (void**)&pAudioClient);                     EXIT_ON_ERROR(hr)
 	
 		//这里面就可以获取，音频终端设备，的数据格式：频率，采集位数，声道数  
-		hr = pAudioClient->GetMixFormat(&pwfx);
-	EXIT_ON_ERROR(hr)
+		hr = pAudioClient->GetMixFormat(&pwfx);               EXIT_ON_ERROR(hr)
 		
 		//初始化管理对象，指定它的最大缓冲区长度，这个很重要
 		//应用程序控制数据块的大小以及延时长短都 靠这里的初始化，具体参数大家看看文档解释 
 		hr = pAudioClient->Initialize(
-			AUDCLNT_SHAREMODE_EXCLUSIVE,//---SHARED其他IAudioCilent可用---EXCLUSIVE独占
+			AUDCLNT_SHAREMODE_SHARED,//---SHARED其他IAudioCilent可用---EXCLUSIVE独占
 			0,						//StreamFlags 
-			hnsRequestedDuration,  //hnsBufferDuration：1s缓冲时长请求
+			hnsRequestedDuration,  //hnsBufferDuration：1s缓冲时长请求，指延时周期
 			0,						//hnsPeriodicity设备周期，设置为0则使用默认
 			pwfx,					//音频format
-			NULL);
-	EXIT_ON_ERROR(hr)
+			NULL);                                            EXIT_ON_ERROR(hr)
 		//hnsBufferDuration，终点缓冲时长
 		//hnsPeriodicity，设备周期。仅在exclusive独占模式可设为非0，shared共享模式则一定为0。 
 		//在独占模式，该参数设定 请求设备周期来连续地读取缓冲数据，通过端点设备。
@@ -100,28 +95,25 @@ HRESULT RecordAudioStream::Record(MyAudioSink *pMySink)
 		// Get the size of the allocated buffer.
 		//这个buffersize，指的是缓冲区最多可以存放多少帧的数据量 
 		//每帧大小为pwfx.nChannels*pwfx.wBitsPerSample
-		hr = pAudioClient->GetBufferSize(&bufferFrameCount);
-	EXIT_ON_ERROR(hr)
+		hr = pAudioClient->GetBufferSize(&bufferFrameCount);  EXIT_ON_ERROR(hr)
 
 		//创建采集管理接口，这个接口很简单，没什么重要的东西  
 		hr = pAudioClient->GetService(
 			IID_IAudioCaptureClient,
-			(void**)&pCaptureClient);
-	EXIT_ON_ERROR(hr)
+			(void**)&pCaptureClient);                                       EXIT_ON_ERROR(hr)
 
 		// Notify the audio sink which format to use.
 		//指定数据格式，计算数据量 
 		//这就决定了，pMySink每一次读取数据量的大小，保证我们在获取的每一帧数据都是正确的 
-		hr = pMySink->SetFormat(pwfx);
-	EXIT_ON_ERROR(hr)
+		//hr = pMySink->SetFormat(pwfx);
+	//EXIT_ON_ERROR(hr)
 
 		// Calculate the actual duration of the allocated buffer.
 		//填满一个指定缓冲时长所需真实时间
 		hnsActualDuration = (double)REFTIMES_PER_SEC * 
 		bufferFrameCount / pwfx->nSamplesPerSec;
-
-	hr = pAudioClient->Start();  // Start recording.
-	EXIT_ON_ERROR(hr)
+// Start recording.
+	hr = pAudioClient->Start();                                             EXIT_ON_ERROR(hr)
 
 		// Each loop fills about half of the shared buffer.
 		while (bDone == FALSE)
@@ -130,39 +122,25 @@ HRESULT RecordAudioStream::Record(MyAudioSink *pMySink)
 			//让程序暂停运行一段时间，缓冲区里在这段时间会被填充数据  
 			Sleep(hnsActualDuration / REFTIMES_PER_MILLISEC / 2);
 
-			hr = pCaptureClient->GetNextPacketSize(&packetLength);
-			EXIT_ON_ERROR(hr)
+			hr = pCaptureClient->GetNextPacketSize(&packetLength);          EXIT_ON_ERROR(hr)
 
 				while (packetLength != 0)
 				{
 					// Get the available data in the shared buffer.
 					//锁定缓冲区，获取数据
-					hr = pCaptureClient->GetBuffer(
-						&pData,
+					hr = pCaptureClient->GetBuffer( &pData,
 						&numFramesAvailable,
-						&flags, NULL, NULL);
-					EXIT_ON_ERROR(hr)
+						&flags, NULL, NULL);                                EXIT_ON_ERROR(hr)
 
-						if (flags & AUDCLNT_BUFFERFLAGS_SILENT)
-						{
-							pData = NULL;  // Tell CopyData to write silence.
-						}
+					if (flags & AUDCLNT_BUFFERFLAGS_SILENT)
+						pData = NULL;  // Tell CopyData to write silence.
 
-					// Copy the available capture data to the audio sink.
-					hr = pMySink->CopyData(
-						(char *)pData, numFramesAvailable, &bDone);
-					EXIT_ON_ERROR(hr)
-
-						hr = pCaptureClient->ReleaseBuffer(numFramesAvailable);
-					EXIT_ON_ERROR(hr)
-
-						hr = pCaptureClient->GetNextPacketSize(&packetLength);
-					EXIT_ON_ERROR(hr)
+					hr = pCaptureClient->ReleaseBuffer(numFramesAvailable); EXIT_ON_ERROR(hr)
+					hr = pCaptureClient->GetNextPacketSize(&packetLength);  EXIT_ON_ERROR(hr)
 				}
 		}
-
-	hr = pAudioClient->Stop();  // Stop recording.
-	EXIT_ON_ERROR(hr)
+    // Stop recording.
+	hr = pAudioClient->Stop();  EXIT_ON_ERROR(hr)
 
 		Exit:
 	CoTaskMemFree(pwfx);
@@ -174,11 +152,11 @@ HRESULT RecordAudioStream::Record(MyAudioSink *pMySink)
 		return hr;
 }
 
-RecordAudioStream::RecordAudioStream()
+Hearing::Hearing()
 {
 }
 
 
-RecordAudioStream::~RecordAudioStream()
+Hearing::~Hearing()
 {
 }

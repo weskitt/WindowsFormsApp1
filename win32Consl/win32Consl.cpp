@@ -6,12 +6,12 @@
 
 int main()
 {
-	FILE *fp;
-	fopen_s(&fp, "C://Users/Akitt/Music/record.pcm", "wb");
+	//FILE *fp;
+	//fopen_s(&fp, "C://Users/Akitt/Music/record.pcm", "wb");
 	CoInitialize(NULL);
-	RecordAudioStream Audio;
-	MyAudioSink test(fp);
-	Audio.Record(&test);
+	
+	Hearing hearing;
+//	Audio.Record(hearing);
 
     return 0;
 }

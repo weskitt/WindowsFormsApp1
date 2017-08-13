@@ -27,7 +27,7 @@
 
 
 
-class RecordAudioStream
+class Hearing
 {
 
 public:
@@ -38,9 +38,9 @@ public:
 	const IID IID_IAudioCaptureClient = __uuidof(IAudioCaptureClient);
 
 	BOOL AdjustFormatTo16Bits(WAVEFORMATEX *pwfx);
-	HRESULT Record(MyAudioSink *pMySink);
+	HRESULT Record();
 
-	RecordAudioStream();
-	~RecordAudioStream();
+	Hearing();
+	~Hearing();
 };
 
