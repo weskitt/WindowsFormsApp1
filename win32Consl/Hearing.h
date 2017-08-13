@@ -37,6 +37,30 @@ public:
 	const IID IID_IAudioClient = __uuidof(IAudioClient);
 	const IID IID_IAudioCaptureClient = __uuidof(IAudioCaptureClient);
 
+public:
+	HRESULT				hr;
+	REFERENCE_TIME		hnsActualDuration; //100ns实际周期
+	UINT32				bufferFrameCount; //缓冲帧数
+	UINT32				numFramesAvailable; //可用帧数
+	BYTE *				pData; //音频数据
+	DWORD				flags;
+	//REFERENCE_TIME      hnsDefaultDevicePeriod(0); //默认设备周期
+
+	REFERENCE_TIME			hnsRequestedDuration = REFTIMES_PER_SEC; //定义1s缓冲填充等待时间
+	IMMDeviceEnumerator *	pEnumerator			 = NULL;  //音频设备枚举器
+	IMMDevice *				pDevice				 = NULL;  //选中的音频设备
+	IAudioClient *			pAudioClient		 = NULL;  //音频客户端
+	IAudioCaptureClient *	pCaptureClient		 = NULL;  //音频捕获客户端
+	WAVEFORMATEX *			pwfx				 = NULL;  //音频格式  
+	UINT32					packetLength		 = 0;     //打包长度
+	BOOL					bDone				 = FALSE;
+	HANDLE					hTimerWakeUp		 = NULL;
+
+
+public:
+
+	void HearingInit();
+
 	BOOL AdjustFormatTo16Bits(WAVEFORMATEX *pwfx);
 	HRESULT Record();
 
