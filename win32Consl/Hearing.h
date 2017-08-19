@@ -16,6 +16,7 @@
 // REFERENCE_TIME time units 每秒与每毫秒
 // REFERENCE_TIME 100ns base unit
 // 定义时间
+#define REFTIME 400000    //40MS
 #define REFTIMES_PER_SEC  10000000  //10000000*100ns == 10000*100us == 1000ms ==1s
 #define REFTIMES_PER_MILLISEC  10000//10000*100ns == 1000us == 1ms
 
@@ -46,7 +47,8 @@ public:
 	DWORD				flags;
 	//REFERENCE_TIME      hnsDefaultDevicePeriod(0); //默认设备周期
 
-	REFERENCE_TIME			hnsRequestedDuration = REFTIMES_PER_SEC; //定义1s缓冲填充等待时间
+	//REFERENCE_TIME			hnsRequestedDuration = REFTIMES_PER_SEC; //定义1s缓冲填充等待时间
+	REFERENCE_TIME			hnsRequestedDuration = REFTIME; //定义40ms缓冲填充等待时间
 	IMMDeviceEnumerator *	pEnumerator			 = NULL;  //音频设备枚举器
 	IMMDevice *				pDevice				 = NULL;  //选中的音频设备
 	IAudioClient *			pAudioClient		 = NULL;  //音频客户端
@@ -61,7 +63,7 @@ public:
 
 	void HearingInit();
 
-	BOOL AdjustFormatTo16Bits(WAVEFORMATEX *pwfx);
+	//BOOL AdjustFormatTo16Bits(WAVEFORMATEX *pwfx);
 	HRESULT Record();
 
 	Hearing();

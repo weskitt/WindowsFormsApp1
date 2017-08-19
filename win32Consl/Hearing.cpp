@@ -49,36 +49,7 @@ void Hearing::HearingInit()
 }
 
 //转换格式为16bits
-BOOL Hearing::AdjustFormatTo16Bits(WAVEFORMATEX * pwfx)
-{
-	BOOL bRet(FALSE);
-
-	if (pwfx->wFormatTag == WAVE_FORMAT_IEEE_FLOAT)
-	{
-		pwfx->wFormatTag = WAVE_FORMAT_PCM;
-		pwfx->wBitsPerSample = 16;
-		pwfx->nBlockAlign = pwfx->nChannels * pwfx->wBitsPerSample / 8;
-		pwfx->nAvgBytesPerSec = pwfx->nBlockAlign * pwfx->nSamplesPerSec;
-
-		bRet = TRUE;
-	}
-	else if (pwfx->wFormatTag == WAVE_FORMAT_EXTENSIBLE)
-	{
-		PWAVEFORMATEXTENSIBLE pEx = reinterpret_cast<PWAVEFORMATEXTENSIBLE>(pwfx);
-		if (IsEqualGUID(KSDATAFORMAT_SUBTYPE_IEEE_FLOAT, pEx->SubFormat))
-		{
-			pEx->SubFormat = KSDATAFORMAT_SUBTYPE_PCM;
-			pEx->Samples.wValidBitsPerSample = 16;
-			pwfx->wBitsPerSample = 16;
-			pwfx->nBlockAlign = pwfx->nChannels * pwfx->wBitsPerSample / 8;
-			pwfx->nAvgBytesPerSec = pwfx->nBlockAlign * pwfx->nSamplesPerSec;
-
-			bRet = TRUE;
-		}
-	}
-
-	return bRet;
-}
+//BOOL Hearing::AdjustFormatTo16Bits(WAVEFORMATEX * pwfx)
 
 //录制音频, 可选参数录制时度，频响范围，采样率(决定波形疏密)
 HRESULT Hearing::Record()
@@ -87,9 +58,11 @@ HRESULT Hearing::Record()
 	hr = pAudioClient->Start(); 
 	EXIT_ON_ERROR(hr)
 
+
 	// Each loop fills about half of the shared buffer.
-	while (bDone == FALSE)
+	while (OnRecording)
 	{
+
 		//让程序暂停运行一段时间，缓冲区里在这段时间会被填充数据  
 		Sleep(hnsActualDuration / REFTIMES_PER_MILLISEC / 2);//约30ms的数据量
 
@@ -103,14 +76,17 @@ HRESULT Hearing::Record()
 				hr = pCaptureClient->GetBuffer( &pData, &numFramesAvailable, &flags, NULL, NULL); 
 				EXIT_ON_ERROR(hr)
 
-				if (flags & AUDCLNT_BUFFERFLAGS_SILENT)
-					pData = NULL;  // Tell CopyData to write silence.
+				//if (flags & AUDCLNT_BUFFERFLAGS_SILENT)
+				//	pData = NULL;  // Tell CopyData to write silence.
 
 				hr = pCaptureClient->ReleaseBuffer(numFramesAvailable); 
 				EXIT_ON_ERROR(hr)
 				hr = pCaptureClient->GetNextPacketSize(&packetLength); 
 				EXIT_ON_ERROR(hr)
 			}
+
+		OnRecording = false;  //
+
 		}
     // Stop recording.
 	hr = pAudioClient->Stop(); 
