@@ -1,4 +1,4 @@
-#pragma once
+//#pragma once
 
 const wchar_t L_B = 'B';
 const wchar_t L_C = 'C';
