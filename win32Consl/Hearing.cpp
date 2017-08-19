@@ -105,8 +105,6 @@ HRESULT Hearing::Record()
 Hearing::Hearing()
 {
 }
-
-
 Hearing::~Hearing()
 {
 }

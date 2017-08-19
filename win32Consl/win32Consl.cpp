@@ -17,13 +17,21 @@ int main()
 	hearing.HearingInit();
 
 	auto thr = bind(&Hearing::Record, hearing);
-	thread h(thr);
-
+	thread Sensor(thr);
+	Sensor.detach();; //等待第一次获取数据
+	
 	while (1)
 	{
 
+
+
+
+
+
+		
 	}
-	hearing.Record();
+
+	
 //	Audio.Record(hearing);
 
     return 0;
