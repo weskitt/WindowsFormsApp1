@@ -18,7 +18,7 @@ int main()
 
 	auto thr = bind(&Hearing::Record, hearing);
 	thread Sensor(thr);
-	Sensor.detach();; //等待第一次获取数据
+	Sensor.detach(); //等待第一次获取数据
 	
 	while (1)
 	{
