@@ -11,15 +11,16 @@ int main()
 	//fopen_s(&fp, "C://Users/Akitt/Music/record.pcm", "wb");
 
 
-	CoInitialize(NULL);
+	//CoInitialize(NULL);
 	
-	Hearing hearing;
-	hearing.HearingInit();
+	//Hearing hearing;
+	//hearing.HearingInit();
 
-	auto thr = bind(&Hearing::Record, hearing);
-	thread Sensor(thr);
-	Sensor.detach(); //等待第一次获取数据
+	//auto thr = bind(&Hearing::Record, hearing);
+	//thread Sensor(thr);
+	//Sensor.detach(); //等待第一次获取数据
 	
+	//d等待 Capture
 	while (1)
 	{
 
@@ -28,7 +29,7 @@ int main()
 
 
 
-		
+		//update Capture
 	}
 
 	
