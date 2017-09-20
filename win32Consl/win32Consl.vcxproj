@@ -138,6 +138,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Act.h" />
     <ClInclude Include="base.h" />
     <ClInclude Include="Capture.h" />
     <ClInclude Include="Hearing.h" />
@@ -148,6 +149,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Act.cpp" />
     <ClCompile Include="Capture.cpp" />
     <ClCompile Include="Hearing.cpp" />
     <ClCompile Include="stdafx.cpp">

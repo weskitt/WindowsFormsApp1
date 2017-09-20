@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="头文件\SymLib">
+      <UniqueIdentifier>{d062fb43-8cdc-40df-927e-be175b130208}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Module">
+      <UniqueIdentifier>{a24e816b-a3dd-4c6b-b452-d39b5e2209b6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -27,19 +33,22 @@
     <ClInclude Include="base.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="SymbolLinkAttr.h">
+    <ClInclude Include="Capture.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="SymolLink.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="SymbolLinkAttr.h">
+      <Filter>头文件\SymLib</Filter>
     </ClInclude>
     <ClInclude Include="SymDataBase.h">
-      <Filter>头文件</Filter>
+      <Filter>头文件\SymLib</Filter>
+    </ClInclude>
+    <ClInclude Include="SymolLink.h">
+      <Filter>头文件\SymLib</Filter>
     </ClInclude>
     <ClInclude Include="Hearing.h">
-      <Filter>头文件</Filter>
+      <Filter>头文件\Module</Filter>
     </ClInclude>
-    <ClInclude Include="Capture.h">
+    <ClInclude Include="Act.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -54,6 +63,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Capture.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Act.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
