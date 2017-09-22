@@ -9,4 +9,3 @@ const int VERB = 1; //¶¯´Ê
 const int NOUN = 2; //Ãû´Ê
 const int MOD = 3; //ÐÞÊÎ´Ê
 
-//bool OnRecording = true;

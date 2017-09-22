@@ -60,7 +60,7 @@ HRESULT Hearing::Record()
 
 
 	// Each loop fills about half of the shared buffer.
-	while (OnRecording)
+	while (OnRecord)
 	{
 
 		//让程序暂停运行一段时间，缓冲区里在这段时间会被填充数据  
@@ -85,7 +85,7 @@ HRESULT Hearing::Record()
 				EXIT_ON_ERROR(hr)
 			}
 
-		OnRecording = false;  //
+		OnRecord = false;  //
 
 		}
     // Stop recording.

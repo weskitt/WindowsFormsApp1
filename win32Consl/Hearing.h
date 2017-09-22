@@ -58,6 +58,7 @@ public:
 	BOOL					bDone				 = FALSE;
 	HANDLE					hTimerWakeUp		 = NULL;
 
+	BOOL					OnRecord		     = true;
 
 public:
 

@@ -11,6 +11,7 @@
 #include <tchar.h>
 
 
+
 #define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS      // 某些 CString 构造函数将是显式的
 
 #include <atlbase.h>
@@ -31,6 +32,9 @@
 #include <map>
 #include <vector>
 #include <thread>
+#include <Windows.h>
+#include <iostream>
+#include <string.h>
 
 // TODO: 在此处引用程序需要的其他头文件
 
@@ -39,4 +43,5 @@
 #include "SymolLink.h"
 #include "SymDataBase.h"
 #include "Hearing.h"
+//#include "curses.h"
 //#include "RecordAudioStream.h"
